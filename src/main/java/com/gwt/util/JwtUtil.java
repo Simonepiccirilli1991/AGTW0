@@ -37,7 +37,7 @@ public class JwtUtil {
 		 return claimsResolver.apply(claims);
 	 }
 	 //for retrieveing any information from token we will need the secret key
-	 private Claims getAllClaimsFromToken(String token) {
+	 public Claims getAllClaimsFromToken(String token) {
 		 return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
 	 }
 
@@ -69,4 +69,7 @@ public class JwtUtil {
 		 final String username = getUsernameFromToken(token);
 		 return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
 	 }
+	 
+	 // validate token wihout userDetail on request
+
 }

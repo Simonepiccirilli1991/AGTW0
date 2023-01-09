@@ -42,4 +42,10 @@ public class GtwController {
 
 		return jwtService.validate(authorizationHeader, request);
 	}
+	
+	@PostMapping("validate/2")
+	public ResponseEntity<String> validate(@RequestHeader("Authorization") String authorizationHeader){
+
+		return jwtService.validateToken(authorizationHeader);
+	}
 }
