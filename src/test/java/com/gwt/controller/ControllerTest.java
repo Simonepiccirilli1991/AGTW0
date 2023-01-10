@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.RequestEntity;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -126,5 +125,29 @@ public class ControllerTest {
 		assertThat(validateResp).isEqualTo("usrnmProva");
 	}
 	
+	@Test
+	public void createAndValidateTestKO() throws Exception {
+		
+		UserDetails request = new UserDetails();
+
+		request.setPsw("pswProva");
+		request.setUsername("usrnmProva");
+
+		MockHttpServletResponse createResp = mvc.perform(post("/create")
+				.contentType("application/json")
+				.content(mapper.writeValueAsString(request)))
+				.andExpect(status().isOk()).andReturn().getResponse();
+
+		assertThat(createResp.getContentAsString()).isEqualTo("true");
+		assertThat(createResp.getHeader("Authorization")).isNotNull();
+
+		String validateResp = mvc.perform(post("/validate/2")
+				.contentType("application/json")
+				.header("Authorization", "stotasso"))
+				.andExpect(status().isUnauthorized()).andReturn().getResponse().getContentAsString();
+
+
+		assertThat(validateResp).isEqualTo("Error on jwt validation");
+	}
 	
 }
