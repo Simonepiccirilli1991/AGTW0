@@ -1,5 +1,5 @@
 server:
- port: 8087
+ port: 8079
 
 Config:
  jwt-secret: ${Jwt_Secret:stotasso}
