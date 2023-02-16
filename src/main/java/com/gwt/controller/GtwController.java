@@ -1,5 +1,6 @@
 package com.gwt.controller;
 
+import com.gwt.service.ValidateJwtBank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,8 @@ public class GtwController {
 
 	@Autowired
 	JwtService jwtService;
-	
+	@Autowired
+	ValidateJwtBank validateJwtBank;
 	
 	@PostMapping("create")
 	public ResponseEntity<Boolean> create(@RequestBody UserDetails request){
@@ -36,16 +38,22 @@ public class GtwController {
 		return jwtService.getUsernameFromToken(authorizationHeader);
 	}
 
-	@PostMapping("validate")
+	@PostMapping("validate/body")
 	public ResponseEntity<String> validate(@RequestBody UserDetails request,
 			@RequestHeader("Authorization") String authorizationHeader){
 
 		return jwtService.validate(authorizationHeader, request);
 	}
 	
-	@PostMapping("validate/2")
+	@PostMapping("validate")
 	public ResponseEntity<String> validate(@RequestHeader("Authorization") String authorizationHeader){
 
 		return jwtService.validateToken(authorizationHeader);
+	}
+
+	@PostMapping("validate/bank")
+	public ResponseEntity<Boolean> validateBank(@RequestHeader("Authorization") String authorizationHeader){
+
+		return new ResponseEntity<>(validateJwtBank.validateJwtBank(authorizationHeader),HttpStatus.OK);
 	}
 }
