@@ -52,7 +52,7 @@ public class GtwController {
 	}
 
 	@PostMapping("validate/bank")
-	public ResponseEntity<Boolean> validateBank(@RequestHeader("Authorization") String authorizationHeader){
+	public ResponseEntity<String> validateBank(@RequestHeader("Authorization") String authorizationHeader){
 
 		return new ResponseEntity<>(validateJwtBank.validateJwtBank(authorizationHeader),HttpStatus.OK);
 	}

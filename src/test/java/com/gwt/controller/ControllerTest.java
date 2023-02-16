@@ -65,7 +65,7 @@ public class ControllerTest {
 		assertThat(createResp.getContentAsString()).isEqualTo("true");
 		assertThat(createResp.getHeader("Authorization")).isNotNull();
 
-		String validateResp = mvc.perform(post("/validate")
+		String validateResp = mvc.perform(post("/validate/body")
 				.contentType("application/json")
 				.header("Authorization", createResp.getHeader("Authorization"))
 				.content(mapper.writeValueAsString(request)))
@@ -92,7 +92,7 @@ public class ControllerTest {
 		assertThat(createResp.getContentAsString()).isEqualTo("true");
 		assertThat(createResp.getHeader("Authorization")).isNotNull();
 
-		String validateResp = mvc.perform(post("/validate/2")
+		String validateResp = mvc.perform(post("/validate")
 				.contentType("application/json")
 				.header("Authorization", createResp.getHeader("Authorization")))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
@@ -141,7 +141,7 @@ public class ControllerTest {
 		assertThat(createResp.getContentAsString()).isEqualTo("true");
 		assertThat(createResp.getHeader("Authorization")).isNotNull();
 
-		String validateResp = mvc.perform(post("/validate/2")
+		String validateResp = mvc.perform(post("/validate")
 				.contentType("application/json")
 				.header("Authorization", "stotasso"))
 				.andExpect(status().isUnauthorized()).andReturn().getResponse().getContentAsString();
@@ -149,5 +149,54 @@ public class ControllerTest {
 
 		assertThat(validateResp).isEqualTo("Error on jwt validation");
 	}
-	
+
+	@Test
+	public void createAndValidateTestBankOK() throws Exception {
+
+		UserDetails request = new UserDetails();
+
+		request.setPsw("pswProva");
+		request.setUsername("Torito");
+
+		MockHttpServletResponse createResp = mvc.perform(post("/create")
+						.contentType("application/json")
+						.content(mapper.writeValueAsString(request)))
+				.andExpect(status().isOk()).andReturn().getResponse();
+
+		assertThat(createResp.getContentAsString()).isEqualTo("true");
+		assertThat(createResp.getHeader("Authorization")).isNotNull();
+
+		String validateResp = mvc.perform(post("/validate/bank")
+						.contentType("application/json")
+						.header("Authorization", createResp.getHeader("Authorization")))
+				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+
+
+		assertThat(validateResp).isEqualTo("Bank user admitted");
+	}
+
+	@Test
+	public void createAndValidateTestBankKO() throws Exception {
+
+		UserDetails request = new UserDetails();
+
+		request.setPsw("pswProva");
+		request.setUsername("ToninoNonVa");
+
+		MockHttpServletResponse createResp = mvc.perform(post("/create")
+						.contentType("application/json")
+						.content(mapper.writeValueAsString(request)))
+				.andExpect(status().isOk()).andReturn().getResponse();
+
+		assertThat(createResp.getContentAsString()).isEqualTo("true");
+		assertThat(createResp.getHeader("Authorization")).isNotNull();
+
+		String validateResp = mvc.perform(post("/validate/bank")
+						.contentType("application/json")
+						.header("Authorization", createResp.getHeader("Authorization")))
+				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+
+
+		assertThat(validateResp).isEqualTo("Bank user not admitted");
+	}
 }
